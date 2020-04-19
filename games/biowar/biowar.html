@@ -14,13 +14,30 @@
         font-family: arial;
         margin: 0;
         padding: none;
-	background-image: url("backdrop.png");
-	background-color: #000;
+	/*background-image: url("backdrop.png");*/
+	background-color: #111;
+      }
+      .menu {
+	      top: 5px;
+	      margin: 5px;
+	      display: inline-flex;
+      }
+      .menu a {
+	color: #fff;
+	text-decoration: none;
+	background-color: #777;
+	padding: 5px;	
+      } 
+
+      .info {
+	      margin: 10px;
+	      color: #fff;
+	      background-color: #111;
       }
 
       .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
       div.emscripten { text-align: center; }      
-      div.emscripten_border { border: 1px solid black; }
+      div.emscripten_border { border: 2px solid white; background-color: #333;}
       /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
       canvas.emscripten { border: 0px none; background-color: black; }
 
@@ -109,6 +126,7 @@
     </style>
   </head>
   <body>
+    <div class="menu"><a href="index.html">Quit!</a></div>
     <div class="spinner" id='spinner'></div>
     <div class="emscripten" id="status">Downloading...</div>
 
@@ -116,11 +134,32 @@
       <progress value="0" max="100" id="progress" hidden=1></progress>
     </div>
 
-    
-    <div>
+   
+    <div class="emscripten_border">
       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
     </div>
     <textarea id="output" rows="8" style="display: none;"></textarea>
+     <div class="info">
+	<table>
+		<tr>
+			<th>Fullscreen</th>
+			<td>Press F9</td>
+		</tr>
+		<tr>
+			<th>Mobile</th>
+			<td>
+			<p>	
+	Rotate your device to horizontal orientation
+       	and touch the top left corner of the game to go fullscreen!
+	</p>
+	<p>
+	Touch controls will show after touch the game area.
+	</p>
+
+			<td>
+		</tr>
+	</table>	
+    </div>
 
     <script type='text/javascript'>
       var statusElement = document.getElementById('status');
