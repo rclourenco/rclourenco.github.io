@@ -3,19 +3,12 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta property="og:url"                content="https://rclourenco.github.io/games/biowar/biowar.html" />
-    <meta property="og:type"               content="game" />
-    <meta property="og:title"              content="Web Programming in C Language" />
-    <meta property="og:description"        content="A game programmed in C and compiled with emscripten" />
-    <meta property="og:image"              content="https://rclourenco.github.io/games/biowar/preview.png" />
-    <title>BioWar</title>
+    <title>Emscripten-Generated Code</title>
     <style>
       body {
         font-family: arial;
         margin: 0;
         padding: none;
-	background-image: url("backdrop.png");
-	background-color: #000;
       }
 
       .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
@@ -112,27 +105,18 @@
     <div class="spinner" id='spinner'></div>
     <div class="emscripten" id="status">Downloading...</div>
 
+<span id='controls'>
+  </span>
+</span>
+
     <div class="emscripten">
       <progress value="0" max="100" id="progress" hidden=1></progress>
     </div>
 
     
-    <div>
+    <div class="emscripten_border">
       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
     </div>
-    <div>
-	    <input type="button" onclick="Module.requestFullscreen(true, false)" />
-	    <table>
-		    <tr><td></td><td><input type="button" onclick="touch('fire', 'up');" /></td><td></td></tr>
-		    <tr>
-			<td><input type="button" onmousedown="touch('left', 'keydown')" onmouseup="touch('left', 'keyup')" /></td>
-			<td></td>
-			<td><input type="button" onmousedown="touch('right', 'keydown')" onmouseup="touch('left', 'keyup')" /></td>
-		    </td>
-	            <tr><td></td><td><input type="button" onclick="touch('fire', 'up');" /></td><td></td></tr>
-	    </table>
-
-    </div>	
     <textarea id="output" rows="8" style="display: none;"></textarea>
 
     <script type='text/javascript'>
@@ -211,39 +195,6 @@
           if (text) Module.printErr('[post-exception status] ' + text);
         };
       };
-    function simulateKeyEvent(eventType, keyCode, charCode) {
-     		var e = document.createEventObject ? document.createEventObject() : document.createEvent("Events");
-     	if (e.initEvent) e.initEvent(eventType, true, true);
-
-     e.keyCode = keyCode;
-     e.which = keyCode;
-     e.charCode = charCode;
-
-     // Dispatch directly to Emscripten's html5.h API (use this if page uses emscripten/html5.h event handling):
-/*       if (typeof JSEvents !== 'undefined' && JSEvents.eventHandlers && JSEvents.eventHandlers.length > 0) {
-           for(var i = 0; i < JSEvents.eventHandlers.length; ++i) {
-         if ((JSEvents.eventHandlers[i].target == Module['canvas'] || JSEvents.eventHandlers[i].target == window)
-        && JSEvents.eventHandlers[i].eventTypeString == eventType) {
-         JSEvents.eventHandlers[i].handlerFunc(e);
-       }
-           }
-     } else {*/
-         // Dispatch to browser for real (use this if page uses SDL or something else for event handling):
-	     console.log(e);
-     		Module['canvas'].dispatchEvent(e);
-//       }
-       }
-       
-      function touch(action, x) {
-	      console.log(x);
-	switch(action) {
-	case 'right': simulateKeyEvent(x, "Control", "ControlLeft"); break;
-	case 'left': simulateKeyEvent(x, "Control", "ControlLeft"); break;
-	default: return;
-	}
-
-      }
-
 function resumeAudio(e) {
 		  if (typeof Module === 'undefined'
 				  	      || typeof Module.SDL2 == 'undefined'
