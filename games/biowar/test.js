@@ -193,7 +193,7 @@ var Module = typeof Module !== 'undefined' ? Module : {};
     }
   
    }
-   loadPackage({"package_uuid": "539f44c4-e7f8-4564-a685-33f36d86ac23", "remote_package_size": 9873871, "files": [{"end": 23258, "start": 0, "filename": "/assets/explosion.bmp", "audio": 0}, {"end": 1940324, "start": 23258, "filename": "/assets/virus_list.bmp", "audio": 0}, {"end": 1948238, "start": 1940324, "filename": "/assets/fire.bmp", "audio": 0}, {"end": 2316958, "start": 1948238, "filename": "/assets/background.raw", "audio": 0}, {"end": 3238680, "start": 2316958, "filename": "/assets/stars.bmp", "audio": 0}, {"end": 4018980, "start": 3238680, "filename": "/assets/shoot.raw", "audio": 0}, {"end": 4401768, "start": 4018980, "filename": "/assets/explosion.raw", "audio": 0}, {"end": 5243464, "start": 4401768, "filename": "/assets/stars.xcf", "audio": 0}, {"end": 5502029, "start": 5243464, "filename": "/assets/48-480734_spaceship-transparent-png-science-fiction.png", "audio": 0}, {"end": 5567107, "start": 5502029, "filename": "/assets/hello.bmp", "audio": 0}, {"end": 7594285, "start": 5567107, "filename": "/assets/spaceship.bmp", "audio": 0}, {"end": 7789546, "start": 7594285, "filename": "/assets/ice-texture5-1.png", "audio": 0}, {"end": 9018484, "start": 7789546, "filename": "/assets/touch.bmp", "audio": 0}, {"end": 9054442, "start": 9018484, "filename": "/assets/sonic_spin.bmp", "audio": 0}, {"end": 9873871, "start": 9054442, "filename": "/assets/stars.png", "audio": 0}]});
+   loadPackage({"remote_package_size": 9873871, "package_uuid": "f9379934-0b6b-449f-bbeb-90ee6bad3b32", "files": [{"start": 0, "end": 23258, "filename": "/assets/explosion.bmp", "audio": 0}, {"start": 23258, "end": 1940324, "filename": "/assets/virus_list.bmp", "audio": 0}, {"start": 1940324, "end": 1948238, "filename": "/assets/fire.bmp", "audio": 0}, {"start": 1948238, "end": 2316958, "filename": "/assets/background.raw", "audio": 0}, {"start": 2316958, "end": 3238680, "filename": "/assets/stars.bmp", "audio": 0}, {"start": 3238680, "end": 4018980, "filename": "/assets/shoot.raw", "audio": 0}, {"start": 4018980, "end": 4401768, "filename": "/assets/explosion.raw", "audio": 0}, {"start": 4401768, "end": 5243464, "filename": "/assets/stars.xcf", "audio": 0}, {"start": 5243464, "end": 5502029, "filename": "/assets/48-480734_spaceship-transparent-png-science-fiction.png", "audio": 0}, {"start": 5502029, "end": 5567107, "filename": "/assets/hello.bmp", "audio": 0}, {"start": 5567107, "end": 7594285, "filename": "/assets/spaceship.bmp", "audio": 0}, {"start": 7594285, "end": 7789546, "filename": "/assets/ice-texture5-1.png", "audio": 0}, {"start": 7789546, "end": 9018484, "filename": "/assets/touch.bmp", "audio": 0}, {"start": 9018484, "end": 9054442, "filename": "/assets/sonic_spin.bmp", "audio": 0}, {"start": 9054442, "end": 9873871, "filename": "/assets/stars.png", "audio": 0}]});
   
   })();
   
@@ -1515,11 +1515,11 @@ function updateGlobalBufferAndViews(buf) {
 }
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 5350480,
+    STACK_BASE = 5350528,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 107600,
-    DYNAMIC_BASE = 5350480,
-    DYNAMICTOP_PTR = 107440;
+    STACK_MAX = 107648,
+    DYNAMIC_BASE = 5350528,
+    DYNAMICTOP_PTR = 107488;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -2107,7 +2107,7 @@ function _emscripten_asm_const_iii(code, sigPtr, argbuf) {
 
 
 
-// STATICTOP = STATIC_BASE + 106576;
+// STATICTOP = STATIC_BASE + 106624;
 /* global initializers */  __ATINIT__.push({ func: function() { ___wasm_call_ctors() } });
 
 
@@ -6581,7 +6581,7 @@ function _emscripten_asm_const_iii(code, sigPtr, argbuf) {
     }
 
   function _emscripten_get_sbrk_ptr() {
-      return 107440;
+      return 107488;
     }
 
   function _emscripten_glActiveTexture(x0) { GLctx['activeTexture'](x0) }
