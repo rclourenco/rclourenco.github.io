@@ -121,28 +121,163 @@
     <div class="emscripten_border">
       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
     </div>
-    <input class="input" placeholder="Tap on the virtual keyboard to start" />
-      <div class="simple-keyboard"></div>
+    <input class="input" size=1 style='display: none;' placeholder="Tap on the virtual keyboard to start" />
+    <div class="simple-keyboard-arrows"></div>
+    <div class="simple-keyboard-main"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/index.min.js"></script>
     <script>
 let Keyboard = window.SimpleKeyboard.default;
 
-let myKeyboard = new Keyboard({
-	  onChange: input => onChange(input),
-	    onKeyPress: button => onKeyPress(button)
+let myKeyboard = new Keyboard('.simple-keyboard-main', {
+//	  onChange: input => onChange(input),
+	    onKeyPress: button => onKeyPress(button),
+		mergeDisplay: true,
+layout: {
+    default: [
+      "` 1 2 3 4 5 6 7 8 9 0 - = {bksp}",
+      "{tab} q w e r t y u i o p [ ] \\",
+      "{lock} a s d f g h j k l ; ' {enter}",
+      "{shift} z x c v b n m , . / {shift}",
+      ".com @ {space}"
+    ],
+    shift: [
+      "~ ! @ # $ % ^ & * ( ) _ + {bksp}",
+      "{tab} Q W E R T Y U I O P { } |",
+      '{lock} A S D F G H J K L : " {enter}',
+      "{shift} Z X C V B N M < > ? {shift}",
+      ".com @ {space}"
+    ]
+  },
+});
+
+let arrowsKeyboard = new Keyboard('.simple-keyboard-arrows', {
+//	  onChange: input => onChange(input),
+	    onKeyPress: button => onKeyPress(button),
+		mergeDisplay: true,
+layout: {
+    default: [
+      "{tab} {arrowup} {enter}",
+      "{arrowleft} {arrowdown} {arrowright}"
+    ],
+    shift: [
+      "{tab} {arrowup} {enter}",
+      "{arrowleft} {arrowdown} {arrowright}"
+    ]
+  },
 });
 
 
 function onChange(input) {
-	  document.querySelector(".input").value = input;
+//	  document.querySelector(".input").value = input;
 	    console.log("Input changed", input);
 }
 
 
 function onKeyPress(button) {
-	  console.log("Button pressed", button);
+	console.log("Button pressed", button);
+	if (button === "{shift}" || button === "{lock}") {
+		handleShift();
+	}
+
+	var keymap={
+		'A':65,
+		'B':66,
+		'C':67,
+		'D':68,
+		'E':69,
+		'F':70,
+		'G':71,
+		'H':72,
+		'I':73,
+		'J':74,
+		'K':75,
+		'L':76,
+		'M':77,
+		'N':78,
+		'O':79,
+		'P':80,
+		'Q':81,
+		'R':82,
+		'S':83,
+		'T':84,
+		'U':85,
+		'V':86,
+		'W':87,
+		'X':88,
+		'Y':89,
+		'Z':90,
+		'{tab}': 9,
+		'{enter}': 13,
+		'{space}': 32,
+		'{bksp}': 8,
+		'{arrowleft}': 37,
+		'{arrowup}': 38,
+		'{arrowright}': 39,
+		'{arrowdown}': 40,
+		'a': 97,
+		'b': 98,
+		'c': 99,
+		'd': 100,
+		'e': 101,
+		'f': 102,
+		'g': 103,
+		'h': 104,
+		'i': 105,
+		'j': 106,
+		'k': 107,
+		'l': 108,
+		'm': 109,
+		'n': 110,
+		'o': 111,
+		'p': 112,
+		'q': 113,
+		'r': 114,
+		's': 115,
+		't': 116,
+		'u': 117,
+		'v': 118,
+		'w': 119,
+		'x': 120,
+		'y': 121,
+		'z': 122,
+	};
+
+	if (keymap[button] !== undefined) {
+		var i = keymap[button];
+
+		var e = new Event('keydown');
+		var shift = false;
+		if (i>=97 && i<97+26) {
+			i -= 32;
+		} else if (i>=65 && i<65+26) {
+			shift = true;
+		}
+		if (shift) {
+			var x = new Event('keydown');
+			x.keyCode = 16;
+			window.dispatchEvent(x);
+		}
+		e.keyCode = i;
+		window.dispatchEvent(e);
+		if (shift) {
+			var x = new Event('keyup');
+			x.keyCode = 16;
+			window.dispatchEvent(x);
+		}
+
+	}
 }
+
+function handleShift() {
+  let currentLayout = myKeyboard.options.layoutName;
+  let shiftToggle = currentLayout === "default" ? "shift" : "default";
+
+  myKeyboard.setOptions({
+    layoutName: shiftToggle
+  });
+}
+
     </script>
     <script type='text/javascript'>
       var statusElement = document.getElementById('status');
