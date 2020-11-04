@@ -3,7 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta property="og:url"                content="https://rclourenco.github.io/games/jamtracker/jamtracker.html" />
+    <meta property="og:type"               content="Music Software" />
+    <meta property="og:title"              content="SDL Graphical User Interface Test" />
+    <meta property="og:description"        content="Graphical User Interface + SDL + C Language + Web Assembly" />
+    <meta property="og:image"              content="https://rclourenco.github.io/games/jamtracker/webjamtracker.png" />
     <title>JamTracker</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/css/index.css">
     <style>
       body {
         font-family: arial;
@@ -115,7 +121,29 @@
     <div class="emscripten_border">
       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
     </div>
+    <input class="input" placeholder="Tap on the virtual keyboard to start" />
+      <div class="simple-keyboard"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/index.min.js"></script>
+    <script>
+let Keyboard = window.SimpleKeyboard.default;
+
+let myKeyboard = new Keyboard({
+	  onChange: input => onChange(input),
+	    onKeyPress: button => onKeyPress(button)
+});
+
+
+function onChange(input) {
+	  document.querySelector(".input").value = input;
+	    console.log("Input changed", input);
+}
+
+
+function onKeyPress(button) {
+	  console.log("Button pressed", button);
+}
+    </script>
     <script type='text/javascript'>
       var statusElement = document.getElementById('status');
       var progressElement = document.getElementById('progress');
