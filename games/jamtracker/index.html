@@ -18,6 +18,10 @@
 	background-color: #111;
       }
 
+      .hidden {
+	      display: none;
+      }
+
       .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
       div.emscripten { text-align: center; }      
       div.emscripten_border { border: 1px solid black; }
@@ -121,9 +125,12 @@
     <div class="emscripten_border">
       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
     </div>
-    <input class="input" size=1 style='display: none;' placeholder="Tap on the virtual keyboard to start" />
-    <div class="simple-keyboard-arrows"></div>
-    <div class="simple-keyboard-main"></div>
+    <div id="softkeyboard" class="hidden">
+        <input class="input" size=1 style='display: none;' placeholder="Tap on the virtual keyboard to start" />
+        <div class="simple-keyboard-arrows"></div>
+        <div class="simple-keyboard-main"></div>
+    </div>
+    <input type="button" value="Toggle Keyboard" onclick="document.querySelector('#softkeyboard').classList.toggle('hidden');" />
 
     <script src="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/index.min.js"></script>
     <script>
@@ -284,7 +291,45 @@ function handleShift() {
       var progressElement = document.getElementById('progress');
       var spinnerElement = document.getElementById('spinner');
 
+      var midi_ops = {
+	open: function(stream) {
+		stream.seekable = false;
+	},
+	close: function(stream) {
+	},
+	flush: function(stream) {
+	},
+	read: function(stream, buffer, offset, length, pos /* ignored */) {
+		var bytesRead = 0;
+		for (var i = 0; i < length; i++) {
+			var result = null;
+			if (result === null || result === undefined) break;
+			bytesRead++;
+			buffer[offset+i] = result;
+		}
+		if (bytesRead) {
+			stream.node.timestamp = Date.now();
+		}
+		return bytesRead;
+	},
+	write: function(stream, buffer, offset, length, pos) {
+		for (var i = 0; i < length; i++) {
+		}
+		if (length) {
+			stream.node.timestamp = Date.now();
+		}
+		return i;
+	}
+      };
+      var initMidiDevice = function () {
+	/**Setup Device**/
+      	var midiin = FS.makedev(64, 0);
+      	FS.registerDevice(midiin, midi_ops);
+      	FS.mkdev('/dev/midi', midiin);
+      };
+
       var Module = {
+	preInit: [initMidiDevice],
         preRun: [],
         postRun: [],
         print: (function() {
