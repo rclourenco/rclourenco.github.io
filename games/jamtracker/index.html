@@ -11,20 +11,21 @@
     <title>JamTracker</title>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-3V4TKT6GBE"></script>
+<script src="midi.js"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-        gtag('config', 'G-3V4TKT6GBE');
+   window.dataLayer = window.dataLayer || [];
+   function gtag(){dataLayer.push(arguments);}
+   gtag('js', new Date());
+   gtag('config', 'G-3V4TKT6GBE');
 </script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/css/index.css">
-    <style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/css/index.css">
+<style>
       body {
         font-family: arial;
         margin: 0;
         padding: none;
 	background-color: #111;
+	color: #fff;
       }
 
       .hidden {
@@ -120,7 +121,7 @@
         outline: none;
       }
     </style>
-  </head>
+</head>
   <body>
 
     <div class="spinner" id='spinner'></div>
@@ -130,7 +131,6 @@
       <progress value="0" max="100" id="progress" hidden=1></progress>
     </div>
 
-    
     <div class="emscripten_border">
       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
     </div>
@@ -140,7 +140,7 @@
         <div class="simple-keyboard-main"></div>
     </div>
     <input type="button" value="Toggle Keyboard" onclick="document.querySelector('#softkeyboard').classList.toggle('hidden');" />
-
+    Midi In: <select id="selectIn"></select> 
     <script src="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/index.min.js"></script>
     <script>
 let Keyboard = window.SimpleKeyboard.default;
@@ -311,7 +311,7 @@ function handleShift() {
 	read: function(stream, buffer, offset, length, pos /* ignored */) {
 		var bytesRead = 0;
 		for (var i = 0; i < length; i++) {
-			var result = null;
+			var result;
 			if (result === null || result === undefined) break;
 			bytesRead++;
 			buffer[offset+i] = result;
@@ -339,26 +339,9 @@ function handleShift() {
 
       var Module = {
 	preInit: [initMidiDevice],
-        preRun: [],
+	preRun: [function() {ENV.JAMTRACKER_MIDIDEV="/dev/midi"}],
         postRun: [],
         print: (function() {
-		/*
-          var element = document.getElementById('output');
-          if (element) element.value = ''; // clear browser cache
-          return function(text) {
-            if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-            // These replacements are necessary if you render to raw HTML
-            //text = text.replace(/&/g, "&amp;");
-            //text = text.replace(/</g, "&lt;");
-            //text = text.replace(/>/g, "&gt;");
-            //text = text.replace('\n', '<br>', 'g');
-            console.log(text);
-            if (element) {
-              element.value += text + "\n";
-              element.scrollTop = element.scrollHeight; // focus on bottom
-            }
-          };
-	  */
         })(),
         printErr: function(text) {
           if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
@@ -412,24 +395,28 @@ function handleShift() {
         };
       };
       function resumeAudio(e) {
-		  if (typeof Module === 'undefined'
-				  	      || typeof Module.SDL2 == 'undefined'
-					      	      || typeof Module.SDL2.audioContext == 'undefined')
-			  	      return;
-		  	  if (Module.SDL2.audioContext.state == 'suspended') {
-				  	      Module.SDL2.audioContext.resume();
-					      	  }
-			  	  if (Module.SDL2.audioContext.state == 'running') {
-					  	      document.getElementById('canvas').removeEventListener('click', resumeAudio);
-						      	      document.removeEventListener('keydown', resumeAudio);
-							      	  }
-				        }
+          if (typeof Module === 'undefined'
+                  || typeof Module.SDL2 == 'undefined'
+                  || typeof Module.SDL2.audioContext == 'undefined')
+               return;
+          if (Module.SDL2.audioContext.state == 'suspended') {
+              Module.SDL2.audioContext.resume();
+          }
+          if (Module.SDL2.audioContext.state == 'running') {
+              document.getElementById('canvas').removeEventListener('click', resumeAudio);
+              document.removeEventListener('keydown', resumeAudio);
+          }
+      }
       document.getElementById('canvas').addEventListener('click', resumeAudio);
       document.addEventListener('keydown', resumeAudio);
 
+      function forward_midi(v) {
+        for(var i = 0; i<v.length; i++)
+      	  _midi_from_js(v[i]);
+      }
+      midiSetReceiveCallback(forward_midi);
+      midi_connect();
     </script>
     <script async type="text/javascript" src="player.js"></script>
   </body>
 </html>
-
-

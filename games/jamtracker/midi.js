@@ -40,61 +40,38 @@ function initDevices(midi) {
 }
 
 function displayDevices() {
-  selectIn.innerHTML = midiIn.map(device => `<option>${device.name}</option>`).join('');
-  selectOut.innerHTML = midiOut.map(device => `<option>${device.name}</option>`).join('');
+  if (selectIn!==undefined && selectIn!==null)
+     selectIn.innerHTML = midiIn.map(device => `<option>${device.name}</option>`).join('');
+
+  var sout = document.getElementById("selectOut");
+  if (sout!==undefined && sout!==null)
+    sout.innerHTML = midiOut.map(device => `<option>${device.name}</option>`).join('');
 }
 
 function startListening() {
-  outputIn.innerHTML = '';
-  
   // Start listening to MIDI messages.
   for (const input of midiIn) {
     input.onmidimessage = midiMessageReceived;
   }
 }
 
+var midi_receive_callback;
+function midiSetReceiveCallback(cb)
+{
+	midi_receive_callback = cb;
+}
+
 function midiMessageReceived(event) {
-  // MIDI commands we care about. See
-  // http://webaudio.github.io/web-midi-api/#a-simple-monophonic-sine-wave-midi-synthesizer.
-  const NOTE_ON = 9;
-  const NOTE_OFF = 8;
 
-  const cmd = event.data[0] >> 4;
-  const pitch = event.data[1];
-  const velocity = (event.data.length > 2) ? event.data[2] : 1;
+  if (typeof(midi_receive_callback) != 'function')
+    return;
 
-   console.log(event.srcElement.name);
-   console.log(event.data);
-
-  // You can use the timestamp to figure out the duration of each note.
-  const timestamp = Date.now();
-
-  var x = "";
-  for (var i=0; i<event.data.length; i++)
-		x += event.data[i]+":";
-  outputIn.innerHTML += x + "<br/>";
-
-return;
-
-  // Note that not all MIDI controllers send a separate NOTE_OFF command for every NOTE_ON.
-  if (cmd === NOTE_OFF || (cmd === NOTE_ON && velocity === 0)) {
-    outputIn.innerHTML += `🎧 from ${event.srcElement.name} note off: pitch:<b>${pitch}</b>, velocity: <b>${velocity}</b> <br/>`;
-  
-    // Complete the note!
-    const note = notesOn.get(pitch);
-    if (note) {
-      outputIn.innerHTML += `🎵 pitch:<b>${pitch}</b>, duration:<b>${timestamp - note}</b> ms. <br>`;
-      notesOn.delete(pitch);
-    }
-  } else if (cmd === NOTE_ON) {
-    outputIn.innerHTML += `🎧 from ${event.srcElement.name} note off: pitch:<b>${pitch}</b>, velocity: <b>${velocity}</b> <br/>`;
-    
-    // One note can only be on at once.
-    notesOn.set(pitch, timestamp);
-  }
-  
-  // Scroll to the bottom of this div.
-  outputIn.scrollTop = outputIn.scrollHeight;
+  var as = document.getElementById("selectIn");
+  if (!as)
+    return;
+  if (event.srcElement.name != as.value)
+    return;
+  midi_receive_callback(event.data);
 }
 
 function sendMidiMessage(pitch, velocity, duration) {
@@ -129,4 +106,5 @@ function copy(event) {
     event.target.textContent = 'Copy';
     event.target.classList.remove('active');
   }, 1000);
-}  
+}
+
