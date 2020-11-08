@@ -6,6 +6,8 @@ let notesOn = new Map();
 
 // Start up WebMidi.
 function midi_connect() {
+  if (typeof(navigator.requestMIDIAccess)!=='function')
+    return;
   navigator.requestMIDIAccess()
   .then(
     (midi) => midiReady(midi),
