@@ -8,7 +8,7 @@
     <meta property="og:title"              content="FM Synthesizer - SDL - Web Assembly" />
     <meta property="og:description"        content="Graphical User Interface + SDL + C Language + Web Assembly" />
     <meta property="og:image"              content="https://rclourenco.github.io/games/fmsynth/websynth.png" />
-    <title>JamTracker</title>
+    <title>FM Synthesizer</title>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-3V4TKT6GBE"></script>
 <script src="midi.js"></script>
@@ -34,7 +34,7 @@
       }
 
       .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
-      div.emscripten { text-align: center; }      
+      div.emscripten { text-align: center; }
       div.emscripten_border { border: 1px solid black; }
       /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
       canvas.emscripten { border: 0px none; background-color: black; }
@@ -62,7 +62,7 @@
         border-right: 5px solid rgb(235, 235, 235);
         border-bottom: 5px solid rgb(235, 235, 235);
         border-top: 5px solid rgb(120, 120, 120);
-        
+
         border-radius: 100%;
         background-color: rgb(189, 215, 46);
       }
@@ -141,7 +141,8 @@
         <div class="simple-keyboard-main"></div>
     </div>
     <!--    <input type="button" value="Toggle Keyboard" onclick="document.querySelector('#softkeyboard').classList.toggle('hidden');" /> -->
-    <span class="white">Midi In: </span><select id="selectIn"></select> 
+    <span class="white">Sequencer   Midi In: </span><select id="selectIn"></select>
+    <span class="white">Pitch Shift Midi In: </span><select id="selectShiftIn"></select>
     <script src="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/index.min.js"></script>
     <script>
 let Keyboard = window.SimpleKeyboard.default;
@@ -415,7 +416,24 @@ function handleShift() {
         for(var i = 0; i<v.length; i++)
       	  _midi_from_js(v[i]);
       }
-      midiSetReceiveCallback(forward_midi);
+
+      function processPitchShift(v) {
+	if (!v)
+	      return;
+	if (v.length!=3)
+	      return;
+	if (v[0]!=0x90)
+	      return;
+	var shift = v[1]%12;
+        console.log(shift);
+	var cmd = [0xB0, 101, 1, 0xB0, 100, 72, 0xB0, 6, shift];
+	forward_midi(cmd);
+      }
+
+      addDeviceSelector("selectIn");
+      addDeviceSelector("selectShiftIn");
+      midiSetReceiveCallback("selectIn", forward_midi);
+      midiSetReceiveCallback("selectShiftIn", processPitchShift);
       midi_connect();
     </script>
     <script async type="text/javascript" src="player.js"></script>

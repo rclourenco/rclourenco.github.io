@@ -20,6 +20,12 @@ function midiReady(midi) {
   midi.onstatechange = function() { initDevices(midi)};
 }
 
+let deviceSelectors = [];
+
+function addDeviceSelector(selector) {
+	deviceSelectors[selector] = true;
+}
+
 function initDevices(midi) {
   // Reset.
   midiIn = [];
@@ -42,12 +48,19 @@ function initDevices(midi) {
 }
 
 function displayDevices() {
-  if (selectIn!==undefined && selectIn!==null)
-     selectIn.innerHTML = midiIn.map(device => `<option>${device.name}</option>`).join('');
+   for (d in deviceSelectors) {
+	var s = document.getElementById(d);
+	if (!s)
+	   continue;
+	if (s!==undefined && s!==null) {
+           let i = 0;
+     	   s.innerHTML = midiIn.map(device => `<option value="${device.id}">${i++}: ${device.name}</option>`).join('');
+	}
+   }
 
   var sout = document.getElementById("selectOut");
   if (sout!==undefined && sout!==null)
-    sout.innerHTML = midiOut.map(device => `<option>${device.name}</option>`).join('');
+    sout.innerHTML = midiOut.map(device => `<option value="${device.id}">${device.name}</option>`).join('');
 }
 
 function startListening() {
@@ -57,23 +70,25 @@ function startListening() {
   }
 }
 
-var midi_receive_callback;
-function midiSetReceiveCallback(cb)
+var midi_receive_callback = [];
+function midiSetReceiveCallback(selector, cb)
 {
-	midi_receive_callback = cb;
+	midi_receive_callback[selector] = cb;
 }
 
 function midiMessageReceived(event) {
+  for (var o in midi_receive_callback) {
+	var as = document.getElementById(o);
+	if (!as)
+    	 	continue;
+  	if (event.srcElement.id != as.value)
+       		continue;
+	var cb = midi_receive_callback[o];
+	if (typeof(cb) != 'function')
+    		continue;
 
-  if (typeof(midi_receive_callback) != 'function')
-    return;
-
-  var as = document.getElementById("selectIn");
-  if (!as)
-    return;
-  if (event.srcElement.name != as.value)
-    return;
-  midi_receive_callback(event.data);
+  	cb(event.data);
+  }
 }
 
 function sendMidiMessage(pitch, velocity, duration) {
